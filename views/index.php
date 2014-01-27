@@ -3,13 +3,13 @@
     <title>Hi there.</title>
 </head>
 <body>
-    <h1>Welcome to Peep</h1>
+    <h1><?= $message ?></h1>
     <strong>Peep is a lightweight web application framework. It was designed as a gentle introduction to php and coding in an MVC pattern. It was also a learning experience created in a weekend, and should not be considered stable or production-ready.</strong>
 
     <h2>Setup</h2>
     <p>Peep comes in a directory named /peep, but you can change it to whatever you want. Drop it in your web root and point your browser at it.</p>
     <p>The only files required for Peep are the <strong>.htaccess</strong> file, the <strong>index.php</strong> file, and the contents of the <strong>/base</strong> directory (although it anticipates the creaton of your <strong>controllers.php</strong> file in the app root directory)</p>
-    
+
     <h1>What's in the tin?</h1>
     <h2>Models</h2>
 
@@ -135,7 +135,7 @@
         def index($path, $params){
             // path is the request path
             // params is a nice array built from any GET parameters present
-            $this->render_template('mytemplate.php', 
+            $this->render_template('mytemplate.php',
                                     $data = array('foo'=>'bar'))
        }
     }
@@ -148,7 +148,7 @@
 
             Hello, <? echo htmlspecialchars('<?= $foo ?>');?> // prints "bar"
     <? echo htmlspecialchars('    </body>
-    </html>')?>        
+    </html>')?>
         </pre>
 
     <h2>FAQs</h2>

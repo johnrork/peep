@@ -1,12 +1,12 @@
 <?
 try {
-    $db = new PDO('sqlite:WVC.db');
-    $db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );  
-} 
+    $db = new PDO($DB);
+    $db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+}
 
 catch (PDOException $e) {
     die("Could not open database. " . $e->getMessage());
-} 
+}
 
 
 class Model {
@@ -24,7 +24,8 @@ class Model {
 	function __construct($values=null){
 		global $db;
 		$this->db = $db;
-
+		if (!$this->table)
+			$this->table = get_class($this);
 		if($values){
 			if(is_numeric(join(array_keys($values)) )){
 				if (count($values) == count($this->columns))
@@ -35,7 +36,7 @@ class Model {
 				}
 				else {
 					echo 'Not enough arguments supplied to model.';
-					throw new Exception("Not enough arguments supplied to model."); 
+					throw new Exception("Not enough arguments supplied to model.");
 				}
 
 				foreach ($this->columns as $i => $col){
@@ -49,7 +50,7 @@ class Model {
 						$this->$key = $value;
 				}
 			}
-			
+
 		}
 	}
 
@@ -101,7 +102,7 @@ class Model {
 			return $this;
 		}
 
-		else 
+		else
 			return False;
 	}
 
@@ -145,7 +146,7 @@ class Model {
 							$this->columns_to_string().
 						") values (".
 							$this->columns_to_placeholders().
-						")";	
+						")";
 
 		$this->tryExecute((array)$this->fields_to_array());
 	}
@@ -158,7 +159,7 @@ class Model {
 		}
 
 		$this->query = rtrim($this->query, ', ');
-		$this->query .= ' where id = :id'; 
+		$this->query .= ' where id = :id';
 
 		$this->tryExecute((array)$this->fields_to_array());
 	}
@@ -167,7 +168,7 @@ class Model {
 		$this->query = "delete from ".$this->table.
 						" where id = :id";
 		if ($this->tryExecute(array($this->id))){
-			return true; 
+			return true;
 		}
 	}
 
@@ -205,13 +206,14 @@ class Model {
 			if ($this->order)
 				$this->query .= ' ORDER BY ' . $this->order;
 			if ($this->limit)
-				$this->query .= ' LIMIT '.$this->limit; 
+				$this->query .= ' LIMIT '.$this->limit;
 			if ($this->offset)
-				$this->query .= ' OFFSET '.$this->offset; 
+				$this->query .= ' OFFSET '.$this->offset;
 
 
 			$this->statement = $this->db->prepare($this->query);
 			$this->statement->execute($params);
+			$this->query = null;
 			return true;
 		}
 
