@@ -1,14 +1,14 @@
 <?
+include('base/controllers.php');
+
+if file_exists('settings.php')
+	include('settings.php');
+
 $DIRNAME  = array_pop(explode('/', dirname(__FILE__)));
 $VIEWPATH = 'views/';
-$DB = 'sqlite:peep.db';
-
-include('base/controllers.php');
 
 if(file_exists('controllers.php'))
 	include('controllers.php');
-
-
 
 if (strpos($_SERVER['REQUEST_URI'], '?'))
 	list($path, $args) = explode(

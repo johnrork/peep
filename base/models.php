@@ -10,22 +10,26 @@ catch (PDOException $e) {
 
 
 class Model {
-    public $hasPK = True;
-    public $table;
-    public $columns;
-    public $query;
-    public $db;
-    public $statement;
-    public $limit;
-    public $order;
-    public $offset;
-    public $params;
+    protected $hasPK = True;
+    protected $table;
+    protected $columns = array();
+    protected $query;
+    protected $db;
+    protected $statement;
+    protected $limit;
+    protected $order;
+    protected $offset;
+    protected $params;
 
     function __construct($values=null){
         global $db;
         $this->db = $db;
         if (!$this->table)
             $this->table = get_class($this);
+
+        if (empty($this->columns))
+            $this->columns = array_keys(call_user_func('get_object_vars', $this));
+
         if($values){
             if(is_numeric(join(array_keys($values)) )){
                 if (count($values) == count($this->columns))
@@ -121,7 +125,7 @@ class Model {
     }
 
     function first(){
-        $this->statement->setFetchMode(PDO::FETCH_CLASS, get_class($this));
+        $this->statement->setFetchMode(PDO::FETCH_INTO, $this);
         return $this->statement->fetch();
     }
 
@@ -131,7 +135,7 @@ class Model {
         }
         else{
             $this->tryExecute();
-            $this->statement->setFetchMode(PDO::FETCH_CLASS, get_class($this));
+            $this->statement->setFetchMode(PDO::FETCH_INTO, $this);
             return $this->statement->fetchAll();
         }
     }
@@ -148,7 +152,10 @@ class Model {
                             $this->columns_to_placeholders().
                         ")";
 
-        $this->tryExecute((array)$this->fields_to_array());
+        if($this->tryExecute($this->fields_to_array()))
+            return $this;
+
+        else return false;
     }
 
     function update(){
