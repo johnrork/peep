@@ -1,7 +1,7 @@
 <?
 include('base/controllers.php');
 
-if file_exists('settings.php')
+if (file_exists('settings.php'))
 	include('settings.php');
 
 $DIRNAME  = array_pop(explode('/', dirname(__FILE__)));
